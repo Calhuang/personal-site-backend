@@ -51,10 +51,10 @@ jobs:
       - run:
           name: Push
           command: |
-            docker login -u$DOCKERHUB_LOGIN -p$DOCKERHUB_PASSWORD
-            docker tag chuang794/seagreen :latest chuang794/seagreen :${CIRCLE_SHA1}
-            docker push chuang794/seagreen :latest
-            docker push chuang794/seagreen :${CIRCLE_SHA1}
+            docker login -u$DOCKERHUB_LOGIN --password-stdin$DOCKERHUB_PASSWORD
+            docker tag chuang794/seagreen:latest chuang794/seagreen :${CIRCLE_SHA1}
+            docker push chuang794/seagreen:latest
+            docker push chuang794/seagreen:${CIRCLE_SHA1}
       
       - run:
           name: Deploy
