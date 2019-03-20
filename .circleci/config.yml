@@ -52,7 +52,7 @@ jobs:
           name: Push
           command: |
             echo "$DOCKERHUB_PASSWORD" | docker login -u$DOCKERHUB_LOGIN --password-stdin
-            docker tag chuang794/seagreen:latest chuang794/seagreen :${CIRCLE_SHA1}
+            docker tag chuang794/seagreen:latest chuang794/seagreen:${CIRCLE_SHA1}
             docker push chuang794/seagreen:latest
             docker push chuang794/seagreen:${CIRCLE_SHA1}
       
