@@ -62,4 +62,4 @@ jobs:
             zip -r deployment-${CIRCLE_SHA1}.zip .
             aws s3 --region us-west-1 cp deployment-${CIRCLE_SHA1}.zip s3://seagreen-docker-eb
             aws elasticbeanstalk create-application-version --application-name personal-server  --version-label ${CIRCLE_SHA1} --source-bundle S3Bucket="seagreen-docker-eb",S3Key="deployment-${CIRCLE_SHA1}.zip" --region us-west-1
-            aws elasticbeanstalk update-environment --application-name personal-server  --environment-name staging --version-label ${CIRCLE_SHA1} --region us-west-1
+            aws elasticbeanstalk update-environment --application-name personal-server  --environment-name PersonalServer-env  --version-label ${CIRCLE_SHA1} --region us-west-1
