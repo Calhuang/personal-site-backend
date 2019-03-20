@@ -26,7 +26,7 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: yarn install
+      - run: npm install
 
       - save_cache:
           paths:
@@ -34,4 +34,32 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
-      - run: yarn test
+      - run: npm test
+
+      - run:
+         name: Install AWS CLI
+         command: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+
+      - run:
+          name: Build
+          command: docker build -t chuang794/seagreen:latest .
+      
+      - run:
+          name: Push
+          command: |
+            docker login -u$DOCKERHUB_LOGIN -p$DOCKERHUB_PASSWORD
+            docker tag chuang794/seagreen :latest chuang794/seagreen :${CIRCLE_SHA1}
+            docker push chuang794/seagreen :latest
+            docker push chuang794/seagreen :${CIRCLE_SHA1}
+      
+      - run:
+          name: Deploy
+          command: |
+            zip -r deployment-${CIRCLE_SHA1}.zip .
+            aws s3 cp deployment-${CIRCLE_SHA1}.zip s3://seagreen -docker-eb --region us-west-1
+            aws elasticbeanstalk create-application-version --application-name seagreen  \
+                --version-label ${CIRCLE_SHA1} --source-bundle S3Bucket="seagreen -docker-eb",S3Key="deployment-${CIRCLE_SHA1}.zip" --region us-west-1
+            aws elasticbeanstalk update-environment --application-name seagreen  \
+                --environment-name staging --version-label ${CIRCLE_SHA1} --region us-west-1
